@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "270363197109",
+    "project_id": "forecastapp-7ac3f",
+    "storage_bucket": "forecastapp-7ac3f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:270363197109:android:3d1950a23e287fb8b448fc",
+        "android_client_info": {
+          "package_name": "com.example.forecastapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwIVPiB8Zvc6tkTIHLjVIRd43h8PiAoOI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
