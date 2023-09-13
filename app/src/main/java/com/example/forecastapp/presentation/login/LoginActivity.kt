@@ -1,20 +1,25 @@
-package com.example.forecastapp
+package com.example.forecastapp.presentation.login
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.example.forecastapp.presentation.app.MainActivity
 import com.example.forecastapp.ui.theme.ForecastAppTheme
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
-class MainActivity : ComponentActivity() {
+
+class LoginActivity : ComponentActivity() {
+    private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = Firebase.auth
         setContent {
             ForecastAppTheme {
                 // A surface container using the 'background' color from the theme
@@ -22,25 +27,15 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    LoginScreen(this, auth)
                 }
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ForecastAppTheme {
-        Greeting("Android")
+    fun startForecastAppActivity(){
+        val intent = Intent(this@LoginActivity, MainActivity::class.java)
+        this@LoginActivity.startActivity(intent)
+        finish()
     }
 }
