@@ -3,7 +3,6 @@ package com.example.forecastapp.presentation.login
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,11 +33,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.forecastapp.presentation.CustomTopAppBar
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun SignUp(navController: NavHostController, auth: FirebaseAuth, context: ComponentActivity) {
+fun SignUp(navController: NavHostController, auth: FirebaseAuth, context: LoginActivity) {
     Box(modifier = Modifier.fillMaxSize()) {
         ScaffoldWithTopBar(navController, auth, context)
     }
@@ -47,7 +45,7 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth, context: Compon
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ScaffoldWithTopBar(navController: NavHostController, auth: FirebaseAuth, context: ComponentActivity) {
+fun ScaffoldWithTopBar(navController: NavHostController, auth: FirebaseAuth, context: LoginActivity) {
     Scaffold(topBar = {
         CustomTopAppBar(navController, "Signup")
     }, content = {
@@ -96,7 +94,7 @@ fun ScaffoldWithTopBar(navController: NavHostController, auth: FirebaseAuth, con
                                     // Sign in success, update UI with the signed-in user's information
                                     Log.d("TAG", "createUserWithEmail:success")
                                     val user = auth.currentUser
-                                    navController.navigate(LoginRoutes.Dashboard.route)
+                                    user?.let { context.startForecastAppActivity(user.uid) }
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Log.w("TAG", "createUserWithEmail:failure", task.exception)

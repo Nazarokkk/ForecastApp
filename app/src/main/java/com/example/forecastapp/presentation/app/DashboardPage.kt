@@ -2,98 +2,160 @@ package com.example.forecastapp.presentation.app
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-
-data class PersonModel(val name: String)
-
-private val personsList = mutableListOf<PersonModel>()
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.forecastapp.domain.app.WeatherCityWrapper
+import com.example.forecastapp.presentation.login.CustomTopAppBar
+import com.example.forecastapp.utils.Dimensions
 
 @Composable
-fun Dashboard(navController: NavHostController) {
+fun DashboardPage(
+    navController: NavHostController,
+    uid: String,
+    dashboardViewModel: DashboardViewModel = hiltViewModel()
+) {
+    val items by dashboardViewModel.forecastList.collectAsState(emptyList())
+    val isShowProgress by dashboardViewModel.progressState.collectAsState(false)
+
+    dashboardViewModel.getForecastForLocations(uid)
+
     Box(modifier = Modifier.fillMaxSize()) {
-        DashboardPage(navController)
+        DashboardView(navController, items, isShowProgress)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun DashboardPage(navController: NavHostController) {
-    personsList.add(PersonModel("James"))
-    personsList.add(PersonModel("John"))
-    personsList.add(PersonModel("Robert"))
-    personsList.add(PersonModel("Michael"))
-    personsList.add(PersonModel("William"))
-    personsList.add(PersonModel("David"))
-    personsList.add(PersonModel("Richard"))
-    personsList.add(PersonModel("Charles"))
-    personsList.add(PersonModel("Joseph"))
-    personsList.add(PersonModel("Steven"))
-    personsList.add(PersonModel("Kenneth"))
-    personsList.add(PersonModel("George"))
-    personsList.add(PersonModel("Donald"))
-
-    Scaffold(
-        content = {
-            Box(modifier = Modifier.background(Color.White)) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.White),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
+fun DashboardView(
+    navController: NavHostController,
+    items: List<WeatherCityWrapper>,
+    isShowProgress: Boolean
+) {
+    Scaffold(topBar = {
+        MainTopAppBar(navController, "My weather")
+    }, content = {
+        Box(modifier = Modifier
+            .background(Color.White)
+            .padding(top = 48.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (isShowProgress) {
+                    CircularProgressIndicator()
+                } else {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(Color.White)
                             .padding(10.dp)
                     ) {
-                        items(personsList) { model ->
-                            ListRow(model = model)
+                        items(items = items) { item ->
+                            ListRow(item) {
+                                //onItemClick
+                            }
                         }
                     }
                 }
             }
-        })
+        }
+    })
 }
 
 @Composable
-fun ListRow(model: PersonModel) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .wrapContentHeight()
-            .fillMaxWidth()
+fun ListRow(item: WeatherCityWrapper, onItemClick: () -> Unit) {
+    val localDim = compositionLocalOf { Dimensions() }
+    Spacer(modifier = Modifier.height(localDim.current.spaceMedium))
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.background,
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = localDim.current.spaceSmall
+        )
     ) {
-        val paddingModifier = Modifier.padding(10.dp)
-        Card(modifier = paddingModifier) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onItemClick.invoke() }
+                .padding(localDim.current.spaceMedium)
+        ) {
+            Row {
                 Text(
-                    text = model.name,
                     fontSize = 24.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black,
+                    text = item.locationName
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = "${item.temp}°",
+                    textAlign = TextAlign.End
+                )
+            }
+
+            Spacer(modifier = Modifier.height(localDim.current.spaceSmall))
+            Row {
+                Row(
+                    modifier = Modifier.weight(1.5f),
+                ) {
+                    Text(
+                        fontStyle = FontStyle.Italic,
+                        text = item.weatherType
+                    )
+                }
+                Text(
+                    modifier = Modifier
+                        .weight(1.0f)
+                        .fillMaxWidth(),
+                    text = item.icon,
+                    textAlign = TextAlign.End
                 )
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun PreviewListItem() {
+    val item = WeatherCityWrapper(
+        lat = "123",
+        lon = "213",
+        temp = "49",
+        datetime = "123123123123",
+        locationId = "2",
+        locationName = "Lviv",
+        weatherType = "Clouds",
+        icon = "123"
+    )
+    ListRow(item = item) {}
 }

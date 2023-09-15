@@ -40,7 +40,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginPage(navController: NavHostController, auth: FirebaseAuth, context: ComponentActivity) {
+fun LoginPage(navController: NavHostController, auth: FirebaseAuth, context: LoginActivity) {
     Box(modifier = Modifier.fillMaxSize()) {
         ClickableText(
             text = AnnotatedString("Sign up here"),
@@ -101,7 +101,7 @@ fun LoginPage(navController: NavHostController, auth: FirebaseAuth, context: Com
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d("TAG", "signInWithEmail:success")
                                 val user = auth.currentUser
-                                navController.navigate(LoginRoutes.Dashboard.route)
+                                user?.let { context.startForecastAppActivity(user.uid) }
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w("TAG", "signInWithEmail:failure", task.exception)

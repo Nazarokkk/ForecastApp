@@ -6,12 +6,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun MainScreen() {
+fun MainScreen(uid: String) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = MainRoutes.Dashboard.route) {
         composable(MainRoutes.Dashboard.route) {
-            Dashboard(navController = navController)
+            DashboardPage(navController = navController, uid)
         }
     }
 }

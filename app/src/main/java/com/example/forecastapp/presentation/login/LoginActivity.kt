@@ -33,8 +33,9 @@ class LoginActivity : ComponentActivity() {
         }
     }
 
-    fun startForecastAppActivity(){
+    fun startForecastAppActivity(uid: String){
         val intent = Intent(this@LoginActivity, MainActivity::class.java)
+        intent.putExtra("FIREBASE_UID", uid)
         this@LoginActivity.startActivity(intent)
         finish()
     }
