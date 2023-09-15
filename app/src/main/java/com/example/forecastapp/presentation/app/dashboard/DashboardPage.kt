@@ -1,4 +1,4 @@
-package com.example.forecastapp.presentation.app
+package com.example.forecastapp.presentation.app.dashboard
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -29,12 +29,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.forecastapp.domain.app.WeatherCityWrapper
-import com.example.forecastapp.presentation.login.CustomTopAppBar
+import com.example.forecastapp.presentation.app.MainActivity
+import com.example.forecastapp.presentation.app.MainTopAppBar
 import com.example.forecastapp.utils.Dimensions
 
 @Composable
 fun DashboardPage(
     navController: NavHostController,
+    activity: MainActivity,
     uid: String,
     dashboardViewModel: DashboardViewModel = hiltViewModel()
 ) {
@@ -44,7 +46,7 @@ fun DashboardPage(
     dashboardViewModel.getForecastForLocations(uid)
 
     Box(modifier = Modifier.fillMaxSize()) {
-        DashboardView(navController, items, isShowProgress)
+        DashboardView(navController, items, activity, isShowProgress)
     }
 }
 
@@ -54,10 +56,11 @@ fun DashboardPage(
 fun DashboardView(
     navController: NavHostController,
     items: List<WeatherCityWrapper>,
+    activity: MainActivity,
     isShowProgress: Boolean
 ) {
     Scaffold(topBar = {
-        MainTopAppBar(navController, "My weather")
+        MainTopAppBar(navController, "My weather", activity)
     }, content = {
         Box(modifier = Modifier
             .background(Color.White)

@@ -17,7 +17,7 @@ class ForecastRepository(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseRepository() {
 
-    suspend fun getForecast(
+    suspend fun getForecastByCityId(
         cityId: String,
     ): WeatherCityWrapper? {
         val weatherApiResponse = safeApiCall(dispatcher) {
@@ -37,6 +37,22 @@ class ForecastRepository(
         }
     }
 
+    suspend fun getForecastByLatLon(
+        lat: String,
+        lon: String
+    ): WeatherCityWrapper? {
+        val weatherApiResponse = safeApiCall(dispatcher) {
+            apiService.findLocationWeatherData(lat,lon)
+        }
+
+        return when (weatherApiResponse) {
+            is ApiResultWrapper.Success -> {
+                return weatherApiResponse.value.body()?.toWeatherCityWrapper()
+            }
+            else -> null
+        }
+    }
+
     suspend fun getForecastFromDB(
         cityIds: List<String>,
     ): List<WeatherCityWrapper> {
@@ -47,4 +63,8 @@ class ForecastRepository(
 
         return weatherList
     }
+
+    suspend fun addForecastToDB(
+        weatherCityWrapper: WeatherCityWrapper
+    ) = dao.insertWeather(weatherCityWrapper.toWeatherDataEntity())
 }

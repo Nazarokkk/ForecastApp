@@ -1,5 +1,6 @@
 package com.example.forecastapp.presentation.app
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.example.forecastapp.presentation.login.LoginActivity
 import com.example.forecastapp.ui.theme.ForecastAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,9 +25,15 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen(firebaseUID)
+                    MainScreen(this, firebaseUID)
                 }
             }
         }
+    }
+
+    fun startLogInActivity(){
+        val intent = Intent(this@MainActivity, LoginActivity::class.java)
+        this@MainActivity.startActivity(intent)
+        finish()
     }
 }

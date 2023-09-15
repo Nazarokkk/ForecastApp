@@ -17,11 +17,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavHostController
 import com.example.forecastapp.R
+import com.example.forecastapp.presentation.login.LoginRoutes
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainTopAppBar(navController: NavHostController, title: String) {
+fun MainTopAppBar(navController: NavHostController, title: String, activity: MainActivity) {
     TopAppBar(
         title = {
             Text(
@@ -31,14 +32,17 @@ fun MainTopAppBar(navController: NavHostController, title: String) {
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = colorResource(id = R.color.purple_400)),
         actions = {
-            IconButton(onClick = { navController.navigateUp() }) {
+            IconButton(onClick = { navController.navigate(MainRoutes.AddLocation.route) }) {
                 Icon(
                     imageVector = Icons.Filled.Add,
                     tint = Color.White,
                     contentDescription = "Add"
                 )
             }
-            IconButton(onClick = { FirebaseAuth.getInstance().signOut() }) {
+            IconButton(onClick = {
+                FirebaseAuth.getInstance().signOut()
+                activity.startLogInActivity()
+            }) {
                 Icon(
                     imageVector = Icons.Filled.ExitToApp,
                     tint = Color.White,

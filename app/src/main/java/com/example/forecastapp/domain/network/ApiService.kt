@@ -17,4 +17,12 @@ interface ApiService {
         @Query("units") units: String = "metric",
         @Query("appid") appid: String = "8eb3d8e9839a8454bad9fe972a113b34"
     ): Response<WeatherDataResponse>
+
+    @GET("weather")
+    suspend fun findLocationWeatherData(
+        @Query("lat") lat: String,
+        @Query("lon") lon: String,
+        @Query("units") units: String = "metric",
+        @Query("appid") appid: String = "8eb3d8e9839a8454bad9fe972a113b34"
+    ): Response<WeatherDataResponse>
 }
