@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.forecastapp.presentation.app.WeatherView
 import com.example.forecastapp.utils.Dimensions
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -49,6 +50,7 @@ fun AddCityPage(
 ) {
     val item by addLocationViewModel.weatherCity.collectAsState(null)
 
+    val localDim = compositionLocalOf { Dimensions() }
     val pos = LatLng(57.0, -2.15)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(pos, 9f)
@@ -83,43 +85,14 @@ fun AddCityPage(
                 onDismissRequest = { isBottomSheetVisible = false },
             ) {
                 item?.let {
-                    val localDim = compositionLocalOf { Dimensions() }
                     Spacer(modifier = Modifier.height(localDim.current.spaceMedium))
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(localDim.current.spaceMedium)
                     ) {
-                        Row {
-                            Text(
-                                fontSize = 24.sp,
-                                text = it.locationName
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                text = "${it.temp}°",
-                                textAlign = TextAlign.End
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(localDim.current.spaceSmall))
-                        Row {
-                            Row(
-                                modifier = Modifier.weight(1.5f),
-                            ) {
-                                Text(
-                                    fontStyle = FontStyle.Italic,
-                                    text = it.weatherType
-                                )
-                            }
-                            Text(
-                                modifier = Modifier
-                                    .weight(1.0f)
-                                    .fillMaxWidth(),
-                                text = it.icon,
-                                textAlign = TextAlign.End
-                            )
+                        Row(modifier = Modifier.height(localDim.current.cardSize)) {
+                            WeatherView(it)
                         }
                         Button(
                             onClick = {

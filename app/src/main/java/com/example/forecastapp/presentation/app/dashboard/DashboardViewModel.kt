@@ -36,10 +36,7 @@ class DashboardViewModel @Inject constructor(
             val locations = locationList.await()
             _forecastList.value = forecastRepository.getForecastFromDB(locations)
 
-            if (forecastRepository.getForecastListByCityId(locations).isNotEmpty()) {
-                _forecastList.value = forecastRepository.getForecastListByCityId(locations)
-            }
-
+            _forecastList.value = viewModelScope.async {forecastRepository.getForecastListByCityId(locations)}.await()
             _progressState.value = false
         }
     }

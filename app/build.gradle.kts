@@ -93,10 +93,6 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.44")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
-    //For Image Loading
-    implementation("com.github.bumptech.glide:glide:4.12.0")
-    implementation("androidx.legacy:legacy-support-v4:1.0.0")
-
     //Map
     implementation("com.google.android.gms:play-services-maps:18.1.0")
     implementation("com.google.maps.android:maps-compose:2.2.0")

@@ -12,5 +12,6 @@ data class Dimensions(
     val spaceLarge: Dp = 32.dp,
     val spaceExtraLarge: Dp = 64.dp,
     val spaceXXLarge: Dp = 128.dp,
-    val spaceXXXLarge: Dp = 256.dp
+    val spaceXXXLarge: Dp = 256.dp,
+    val cardSize: Dp = 108.dp,
 )
