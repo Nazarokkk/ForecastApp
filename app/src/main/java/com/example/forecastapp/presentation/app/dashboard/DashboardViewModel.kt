@@ -27,21 +27,20 @@ class DashboardViewModel @Inject constructor(
     fun getForecastForLocations(uid: String) {
         _progressState.value = true
         firebaseFirestoreRepository = FirebaseFirestoreRepository(uid)
-        val forecastCityWrapperList: MutableList<WeatherCityWrapper> = mutableListOf()
 
         //Get location ids from firebase
         val locationList = viewModelScope.async { firebaseFirestoreRepository.getUserLocations() }
 
-        //Get forecast for locations
+        //Get forecast for locations from server
         viewModelScope.launch {
             val locations = locationList.await()
             _forecastList.value = forecastRepository.getForecastFromDB(locations)
 
-            locations.forEach {
-                forecastRepository.getForecastByCityId(it)?.let { forecastCityWrapperList += it }
+            if (forecastRepository.getForecastListByCityId(locations).isNotEmpty()) {
+                _forecastList.value = forecastRepository.getForecastListByCityId(locations)
             }
+
             _progressState.value = false
-            _forecastList.value = forecastCityWrapperList
         }
     }
 }

@@ -17,24 +17,28 @@ class ForecastRepository(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseRepository() {
 
-    suspend fun getForecastByCityId(
-        cityId: String,
-    ): WeatherCityWrapper? {
-        val weatherApiResponse = safeApiCall(dispatcher) {
-            apiService.findCityWeatherData(cityId)
-        }
+    suspend fun getForecastListByCityId(
+        cityIds: List<String>,
+    ): List<WeatherCityWrapper> {
+        val result: MutableList<WeatherCityWrapper> = mutableListOf()
 
-        return when (weatherApiResponse) {
-            is ApiResultWrapper.Success -> {
-                val weatherCity = weatherApiResponse.value.body()?.toWeatherCityWrapper()
-                weatherCity?.let {
-                    dao.insertWeather(it.toWeatherDataEntity())
-                    return weatherCity
-                }
+        cityIds.forEach { cityId ->
+            val weatherApiResponse = safeApiCall(dispatcher) {
+                apiService.findCityWeatherData(cityId)
             }
 
-            else -> null
+            when (weatherApiResponse) {
+                is ApiResultWrapper.Success -> {
+                    val weatherCity = weatherApiResponse.value.body()?.toWeatherCityWrapper()
+                    weatherCity?.let {
+                        dao.insertWeather(it.toWeatherDataEntity())
+                        result.add(weatherCity)
+                    }
+                }
+                else -> null
+            }
         }
+        return result
     }
 
     suspend fun getForecastByLatLon(
@@ -42,13 +46,14 @@ class ForecastRepository(
         lon: String
     ): WeatherCityWrapper? {
         val weatherApiResponse = safeApiCall(dispatcher) {
-            apiService.findLocationWeatherData(lat,lon)
+            apiService.findLocationWeatherData(lat, lon)
         }
 
         return when (weatherApiResponse) {
             is ApiResultWrapper.Success -> {
                 return weatherApiResponse.value.body()?.toWeatherCityWrapper()
             }
+
             else -> null
         }
     }
