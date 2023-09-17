@@ -35,7 +35,7 @@ class ForecastRepository(
                         result.add(weatherCity)
                     }
                 }
-                else -> null
+                else -> getForecastFromDB(cityIds)
             }
         }
         return result

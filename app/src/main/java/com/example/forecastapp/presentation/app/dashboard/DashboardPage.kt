@@ -23,9 +23,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -49,7 +52,9 @@ fun DashboardPage(
     val items by dashboardViewModel.forecastList.collectAsState(emptyList())
     val isShowProgress by dashboardViewModel.progressState.collectAsState(false)
 
-    dashboardViewModel.getForecastForLocations(uid)
+    LaunchedEffect(key1 = true, block = {
+        dashboardViewModel.getForecastForLocations(uid)
+    })
 
     Box(modifier = Modifier.fillMaxSize()) {
         DashboardView(navController, items, dashboardViewModel, activity, isShowProgress)

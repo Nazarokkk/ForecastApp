@@ -24,8 +24,11 @@ class DashboardViewModel @Inject constructor(
     private val _progressState = MutableStateFlow(false)
     val progressState: StateFlow<Boolean> get() = _progressState
 
+    private lateinit var uid : String
+
     fun getForecastForLocations(uid: String) {
         _progressState.value = true
+        this.uid = uid
         firebaseFirestoreRepository = FirebaseFirestoreRepository(uid)
 
         //Get location ids from firebase
@@ -34,11 +37,7 @@ class DashboardViewModel @Inject constructor(
         //Get forecast for locations from server
         viewModelScope.launch {
             val locations = locationList.await()
-            _forecastList.value = forecastRepository.getForecastFromDB(locations)
-
-            _forecastList.value =
-                viewModelScope.async { forecastRepository.getForecastListByCityId(locations) }
-                    .await()
+            _forecastList.value = forecastRepository.getForecastListByCityId(locations)
             _progressState.value = false
         }
     }
@@ -46,9 +45,10 @@ class DashboardViewModel @Inject constructor(
     fun removeItem(item: WeatherCityWrapper) {
         _progressState.value = true
 
-         viewModelScope.async {
-             val isDeleted = firebaseFirestoreRepository.removeLocation(item.locationId)
+        viewModelScope.launch {
+            val isDeleted = firebaseFirestoreRepository.removeLocation(item.locationId)
             _progressState.value = isDeleted
+            getForecastForLocations(uid)
         }
     }
 }
