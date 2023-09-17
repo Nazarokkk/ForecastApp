@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.forecastapp.domain.app.WeatherCityWrapper
@@ -91,69 +93,77 @@ fun DashboardView(
                 if (isShowProgress) {
                     CircularProgressIndicator()
                 } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.White)
-                            .padding(localDim.current.spaceSmall)
-                    ) {
+                    if (items.isEmpty()) {
+                        Row {
+                            Text(
+                                fontSize = 28.sp,
+                                text = "Your city list is empty"
+                            )
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.White)
+                                .padding(localDim.current.spaceSmall)
+                        ) {
+                            items(items = items) { item ->
+                                val dismissState = rememberDismissState()
+                                Spacer(modifier = Modifier.height(localDim.current.spaceLarge))
 
-                        items(items = items) { item ->
-                            val dismissState = rememberDismissState()
-                            Spacer(modifier = Modifier.height(localDim.current.spaceLarge))
+                                if (dismissState.isDismissed(DismissDirection.EndToStart)) {
+                                    dashboardViewModel.removeItem(item)
+                                }
 
-                            if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-                                dashboardViewModel.removeItem(item)
-                            }
-
-                            SwipeToDismiss(state = dismissState,
-                                directions = setOf(DismissDirection.EndToStart),
-                                background = {
-                                    val color by animateColorAsState(
-                                        when (dismissState.targetValue) {
-                                            DismissValue.Default -> Color.White
-                                            else -> Color.Red
-                                        }, label = ""
-                                    )
-                                    val alignment = Alignment.CenterEnd
-                                    val icon = Icons.Default.Delete
-
-                                    val scale by animateFloatAsState(
-                                        if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f,
-                                        label = ""
-                                    )
-
-                                    Box(
-                                        Modifier
-                                            .fillMaxSize()
-                                            .background(color)
-                                            .padding(horizontal = localDim.current.spaceMedium),
-                                        contentAlignment = alignment
-                                    ) {
-                                        Icon(
-                                            icon,
-                                            contentDescription = "Delete Icon",
-                                            tint = Color.White,
-                                            modifier = Modifier.scale(scale)
+                                SwipeToDismiss(state = dismissState,
+                                    directions = setOf(DismissDirection.EndToStart),
+                                    background = {
+                                        val color by animateColorAsState(
+                                            when (dismissState.targetValue) {
+                                                DismissValue.Default -> Color.White
+                                                else -> Color.Red
+                                            }, label = ""
                                         )
-                                    }
-                                },
-                                dismissContent = {
-                                    Spacer(modifier = Modifier.height(localDim.current.spaceMedium))
-                                    Card(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(localDim.current.cardSize),
-                                        colors = CardDefaults.cardColors(
-                                            containerColor = MaterialTheme.colorScheme.background,
-                                        ),
-                                        elevation = CardDefaults.cardElevation(
-                                            defaultElevation = localDim.current.spaceSmall
-                                        ),
-                                    ) {
-                                        WeatherView(item)
-                                    }
-                                })
+                                        val alignment = Alignment.CenterEnd
+                                        val icon = Icons.Default.Delete
+
+                                        val scale by animateFloatAsState(
+                                            if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f,
+                                            label = ""
+                                        )
+
+                                        Box(
+                                            Modifier
+                                                .fillMaxSize()
+                                                .background(color)
+                                                .padding(horizontal = localDim.current.spaceMedium),
+                                            contentAlignment = alignment
+                                        ) {
+                                            Icon(
+                                                icon,
+                                                contentDescription = "Delete Icon",
+                                                tint = Color.White,
+                                                modifier = Modifier.scale(scale)
+                                            )
+                                        }
+                                    },
+                                    dismissContent = {
+                                        Spacer(modifier = Modifier.height(localDim.current.spaceMedium))
+                                        Card(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(localDim.current.cardSize),
+                                            colors = CardDefaults.cardColors(
+                                                containerColor = MaterialTheme.colorScheme.background,
+                                            ),
+                                            elevation = CardDefaults.cardElevation(
+                                                defaultElevation = localDim.current.spaceSmall
+                                            ),
+                                        ) {
+                                            WeatherView(item)
+                                        }
+                                    })
+                            }
                         }
                     }
                 }

@@ -51,9 +51,9 @@ fun AddCityPage(
     val item by addLocationViewModel.weatherCity.collectAsState(null)
 
     val localDim = compositionLocalOf { Dimensions() }
-    val pos = LatLng(57.0, -2.15)
+    val pos = LatLng(49.8383, 24.0232)
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(pos, 9f)
+        position = CameraPosition.fromLatLngZoom(pos, 10f)
     }
     val mapState = rememberMarkerState(position = pos)
     var isBottomSheetVisible by remember { mutableStateOf(false) }
@@ -67,7 +67,7 @@ fun AddCityPage(
             cameraPositionState = cameraPositionState,
             onMapClick = {
                 Log.e("Location latLon", "lat:${it.latitude} lon:${it.longitude}")
-                cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 9f)
+                cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 10f)
                 mapState.position = it
                 addLocationViewModel.getForecastForLocation(
                     uid,
