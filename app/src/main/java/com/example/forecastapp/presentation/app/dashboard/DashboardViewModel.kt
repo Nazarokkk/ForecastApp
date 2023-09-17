@@ -36,8 +36,19 @@ class DashboardViewModel @Inject constructor(
             val locations = locationList.await()
             _forecastList.value = forecastRepository.getForecastFromDB(locations)
 
-            _forecastList.value = viewModelScope.async {forecastRepository.getForecastListByCityId(locations)}.await()
+            _forecastList.value =
+                viewModelScope.async { forecastRepository.getForecastListByCityId(locations) }
+                    .await()
             _progressState.value = false
+        }
+    }
+
+    fun removeItem(item: WeatherCityWrapper) {
+        _progressState.value = true
+
+         viewModelScope.async {
+             val isDeleted = firebaseFirestoreRepository.removeLocation(item.locationId)
+            _progressState.value = isDeleted
         }
     }
 }
