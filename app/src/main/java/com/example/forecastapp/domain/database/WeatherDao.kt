@@ -15,11 +15,4 @@ interface WeatherDao {
     suspend fun getWeather(
         cityId: String
     ): WeatherDataEntity?
-//
-//    @Query("SELECT * FROM completed_challenges WHERE member_username LIKE :username AND datetime(completed_at) < datetime(:lastShownChallengeCompletedAt) AND datetime(completed_at) >= datetime(:lastApiChallengeCompletedAt) ORDER BY datetime(completed_at) DESC LIMIT 200")
-//    suspend fun getChallengesFromMemberBetweenDates(
-//        username: String,
-//        lastShownChallengeCompletedAt: String,
-//        lastApiChallengeCompletedAt: String
-//    ): List<CompletedChallengeEntity>
 }
