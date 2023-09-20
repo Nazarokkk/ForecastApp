@@ -24,12 +24,4 @@ object RepositoriesModule {
             Dispatchers.IO
         )
     }
-
-//    @Provides
-//    fun provideChallengeDetailsRepository(
-//        challengeDetailsDao: ChallengeDetailsDao,
-//        apiService: ApiService
-//    ): ChallengeDetailsRepository {
-//        return DefaultChallengeDetailsRepository(challengeDetailsDao, apiService, Dispatchers.IO)
-//    }
 }
